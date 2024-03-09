@@ -1,0 +1,8 @@
+*
+!/.gitignore
+!/.idea/
+!/.idea/**/*
+!/**/
+!/**/*.go
+!/go.mod
+!/go.work
