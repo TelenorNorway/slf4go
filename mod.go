@@ -2,7 +2,6 @@ package slf4go
 
 import (
 	"fmt"
-	"github.com/telenornorway/slf4go/integration"
 	"github.com/telenornorway/slf4go/internal"
 )
 
@@ -80,7 +79,7 @@ func MdcCopy() map[string]string {
 	return internal.Driver.MdcCopy()
 }
 
-func UseDriver(driver integration.Driver) {
+func UseDriver(driver Driver) {
 	if internal.Driver != nil {
 		panic(fmt.Sprintf("Driver already installed: %s", internal.Driver.Name()))
 	}

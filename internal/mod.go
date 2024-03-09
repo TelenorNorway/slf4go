@@ -1,5 +1,5 @@
 package internal
 
-import "github.com/telenornorway/slf4go/integration"
+import "github.com/telenornorway/slf4go"
 
-var Driver integration.Driver = nil
+var Driver slf4go.Driver = nil
