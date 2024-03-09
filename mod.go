@@ -2,7 +2,6 @@ package slf4go
 
 import (
 	"fmt"
-	"github.com/telenornorway/slf4go/internal"
 )
 
 type LogLevel int
@@ -45,6 +44,15 @@ type Logger interface {
 	IsFatalEnabled() bool
 }
 
+var installedDriver Driver = nil
+
+func UseDriver(driver Driver) {
+	if installedDriver != nil {
+		panic(fmt.Sprintf("Driver already installed: %s", installedDriver.Name()))
+	}
+	installedDriver = driver
+}
+
 type Driver interface {
 	Name() string
 	GetLogger() Logger
@@ -56,32 +64,25 @@ type Driver interface {
 }
 
 func GetLogger() Logger {
-	return internal.Driver.GetLogger()
+	return installedDriver.GetLogger()
 }
 
 func MdcPut(key, value string) {
-	internal.Driver.MdcPut(key, value)
+	installedDriver.MdcPut(key, value)
 }
 
 func MdcGet(key string) (string, bool) {
-	return internal.Driver.MdcGet(key)
+	return installedDriver.MdcGet(key)
 }
 
 func MdcRemove(key string) {
-	internal.Driver.MdcRemove(key)
+	installedDriver.MdcRemove(key)
 }
 
 func MdcClear() {
-	internal.Driver.MdcClear()
+	installedDriver.MdcClear()
 }
 
 func MdcCopy() map[string]string {
-	return internal.Driver.MdcCopy()
-}
-
-func UseDriver(driver Driver) {
-	if internal.Driver != nil {
-		panic(fmt.Sprintf("Driver already installed: %s", internal.Driver.Name()))
-	}
-	internal.Driver = driver
+	return installedDriver.MdcCopy()
 }
