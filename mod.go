@@ -44,12 +44,14 @@ type Logger interface {
 	IsFatalEnabled() bool
 }
 
-var installedDriver Driver = nil
+var installedDriver Driver = nop{}
+var isInitialized bool
 
 func UseDriver(driver Driver) {
-	if installedDriver != nil {
+	if isInitialized {
 		panic(fmt.Sprintf("Driver already installed: %s", installedDriver.Name()))
 	}
+	isInitialized = true
 	installedDriver = driver
 }
 
@@ -86,3 +88,41 @@ func MdcClear() {
 func MdcCopy() map[string]string {
 	return installedDriver.MdcCopy()
 }
+
+type nop struct{}
+type nopLogger struct{}
+
+func (n nopLogger) Name() string                           { return "nop" }
+func (n nopLogger) Level() LogLevel                        { return Fatal }
+func (n nopLogger) Trace(_ string, _ ...any)               {}
+func (n nopLogger) TraceIf(_ bool, _ string, _ ...any)     {}
+func (n nopLogger) TraceUnless(_ bool, _ string, _ ...any) {}
+func (n nopLogger) IsTraceEnabled() bool                   { return false }
+func (n nopLogger) Debug(_ string, _ ...any)               {}
+func (n nopLogger) DebugIf(_ bool, _ string, _ ...any)     {}
+func (n nopLogger) DebugUnless(_ bool, _ string, _ ...any) {}
+func (n nopLogger) IsDebugEnabled() bool                   { return false }
+func (n nopLogger) Info(_ string, _ ...any)                {}
+func (n nopLogger) InfoIf(_ bool, _ string, _ ...any)      {}
+func (n nopLogger) InfoUnless(_ bool, _ string, _ ...any)  {}
+func (n nopLogger) IsInfoEnabled() bool                    { return false }
+func (n nopLogger) Warn(_ string, _ ...any)                {}
+func (n nopLogger) WarnIf(_ bool, _ string, _ ...any)      {}
+func (n nopLogger) WarnUnless(_ bool, _ string, _ ...any)  {}
+func (n nopLogger) IsWarnEnabled() bool                    { return false }
+func (n nopLogger) Error(_ string, _ ...any)               {}
+func (n nopLogger) ErrorIf(_ bool, _ string, _ ...any)     {}
+func (n nopLogger) ErrorUnless(_ bool, _ string, _ ...any) {}
+func (n nopLogger) IsErrorEnabled() bool                   { return false }
+func (n nopLogger) Fatal(_ string, _ ...any)               {}
+func (n nopLogger) FatalIf(_ bool, _ string, _ ...any)     {}
+func (n nopLogger) FatalUnless(_ bool, _ string, _ ...any) {}
+func (n nopLogger) IsFatalEnabled() bool                   { return false }
+
+func (n nop) Name() string                   { return "nop" }
+func (n nop) GetLogger() Logger              { return nopLogger{} }
+func (n nop) MdcClear()                      {}
+func (n nop) MdcPut(_, _ string)             {}
+func (n nop) MdcGet(_ string) (string, bool) { return "", false }
+func (n nop) MdcRemove(_ string)             {}
+func (n nop) MdcCopy() map[string]string     { return map[string]string{} }
