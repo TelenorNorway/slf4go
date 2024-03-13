@@ -2,6 +2,7 @@ package slf4go
 
 import (
 	"github.com/telenornorway/slf4go/internal/caller"
+	"time"
 )
 
 type LogPayload struct {
@@ -11,6 +12,7 @@ type LogPayload struct {
 
 	// Information about the log entry
 
+	at     time.Time
 	level  LogLevel
 	format string
 	args   []any
@@ -23,6 +25,7 @@ type LogPayload struct {
 
 func (p *LogPayload) Name() string              { return p.name }
 func (p *LogPayload) Level() LogLevel           { return p.level }
+func (p *LogPayload) At() time.Time             { return p.at }
 func (p *LogPayload) Format() string            { return p.format }
 func (p *LogPayload) Args() []any               { return p.args }
 func (p *LogPayload) Fields() map[string]string { return p.fields }
@@ -42,6 +45,7 @@ func newLogPayload(
 	p := LogPayload{
 		name:       name,
 		level:      level,
+		at:         time.Now(),
 		format:     format,
 		args:       args,
 		fields:     configuredDriver.MdcCopy(),
